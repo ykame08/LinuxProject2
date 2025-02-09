@@ -23,8 +23,8 @@ get_memory_usage() {
     read -r -a mem_info <<<"$(free | grep Mem)"
     total_mem="${mem_info[1]}"
     used_mem="${mem_info[2]}"
-    # Fix: Add -l flag to bc and quote the expression
-    echo "scale=2; ($used_mem * 100) / $total_mem" | bc -l
+    # Fix: Perform calculation in one go and handle floating point properly
+    printf "%.2f" "$(echo "scale=2; ($used_mem * 100) / $total_mem" | bc)"
 }
 
 # Function to get network statistics for physical interface
@@ -44,19 +44,19 @@ get_network_stats() {
 get_trend() {
     local current_value=$1
     local metric_index=$2
-    
+   
     # If log doesn't exist or is empty, cannot determine trend
     if [[ ! -s "$LOG_FILE" ]]; then
         echo ""
         return
     fi
-    
+   
     # Get last logged value for comparison
     read -r -a last_log_entry <<<"$(tail -1 "$LOG_FILE" | cut -d ']' -f 2)"
     local last_value="${last_log_entry[$metric_index]}"
-    
-    # Fix: Add -l flag to bc for floating point comparison
-    if (( $(echo "$current_value > $last_value" | bc -l) )); then
+   
+    # Fix: Use printf for comparing floating point numbers
+    if (( $(printf "%.0f" "$(echo "$current_value > $last_value" | bc -l)") )); then
         echo "rise"
     else
         echo "fall"
@@ -73,14 +73,14 @@ if [[ -t 0 ]]; then
     # Get trends
     cpu_trend=$(get_trend "$cpu_usage" 0)
     mem_trend=$(get_trend "$mem_usage" 1)
-    
+   
     echo "Current system metrics:"
     echo -n "CPU usage: current - $cpu_usage%"
     [[ -n "$cpu_trend" ]] && echo " trend - $cpu_trend" || echo ""
-    
+   
     echo -n "Memory usage: current - $mem_usage%"
     [[ -n "$mem_trend" ]] && echo " trend - $mem_trend" || echo ""
-    
+   
     echo "Tx/Rx bytes: $tx_bytes/$rx_bytes"
 
 # Handle automated mode
