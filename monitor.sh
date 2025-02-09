@@ -39,7 +39,7 @@ get_memory_usage() {
     read -r -a mem_info <<<"$(free | grep Mem)"
     total_mem="${mem_info[1]}"
     used_mem="${mem_info[2]}"
-    awk -v used="$used_mem" -v total="$total_mem" 'BEGIN { printf "%.2f", (used * 100) / total }'
+    awk -v used="$used_mem" -v total="$total_mem" 'BEGIN { printf "%.1f", (used * 100) / total }'
 }
 
 # Function to get network statistics for physical interface
@@ -103,6 +103,7 @@ else
     # Manage log file before adding new entry
     manage_log_file
     
-    # Log format: [timestamp] cpu% mem% tx rx
+    # Log format exactly as shown in the image: [date] cpu% mem% tx rx
+    # Example: [Fri Oct 25 09:28:43 UTC 2024] 3 71.3 56598489 15940903
     echo "[$(date +'%a %b %d %H:%M:%S %Z %Y')] $cpu_usage $mem_usage $tx_bytes $rx_bytes" >> "$LOG_FILE"
 fi
