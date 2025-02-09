@@ -103,6 +103,6 @@ else
     # Manage log file before adding new entry
     manage_log_file
     
-    # Log format: [timestamp] cpu% mem% tx rx
+    # Log format: LOG_FILE="/var/log/monitor.log" echo "[timestamp] cpu% mem% tx rx"
     echo "[$(date +'%a %b %d %H:%M:%S %Z %Y')] $cpu_usage $mem_usage $tx_bytes $rx_bytes" >> "$LOG_FILE"
 fi
