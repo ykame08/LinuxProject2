@@ -20,38 +20,27 @@ manage_log_file() {
     # Check if directory exists, if not create it
     log_dir=$(dirname "$LOG_FILE")
     if [[ ! -d "$log_dir" ]]; then
-        mkdir -p "$log_dir" || {
-            echo "Error: Cannot create directory $log_dir"
-            exit 1
-        }
-    }
+        mkdir -p "$log_dir" || echo "Error: Cannot create directory $log_dir" && exit 1
+    fi
 
     # Create log file if it doesn't exist
     if [[ ! -f "$LOG_FILE" ]]; then
-        touch "$LOG_FILE" 2>/dev/null || {
-            echo "Error: Cannot create log file $LOG_FILE"
-            exit 1
-        }
-        chmod 644 "$LOG_FILE" 2>/dev/null || {
-            echo "Error: Cannot set permissions on $LOG_FILE"
-            exit 1
-        }
+        touch "$LOG_FILE" || echo "Error: Cannot create log file $LOG_FILE" && exit 1
+        chmod 644 "$LOG_FILE" || echo "Error: Cannot set permissions on $LOG_FILE" && exit 1
     fi
 
     # Check if file is writable
     if [[ ! -w "$LOG_FILE" ]]; then
         echo "Error: Log file $LOG_FILE is not writable"
         exit 1
-    }
+    fi
     
     # Rotate log if necessary
-    local file_size=0
     if [[ -f "$LOG_FILE" ]]; then
-        file_size=$(stat -f%z "$LOG_FILE" 2>/dev/null || stat -c%s "$LOG_FILE" 2>/dev/null)
-        if [[ $? -ne 0 ]]; then
+        file_size=$(stat -f%z "$LOG_FILE" 2>/dev/null || stat -c%s "$LOG_FILE" 2>/dev/null) || {
             echo "Error: Cannot get file size of $LOG_FILE"
             exit 1
-        fi
+        }
         
         if [[ $file_size -gt $MAX_LOG_SIZE ]]; then
             tail -n 1000 "$LOG_FILE" > "$LOG_FILE.tmp" || {
@@ -98,7 +87,7 @@ get_memory_usage() {
     if [[ -z "$total_mem" ]] || [[ -z "$used_mem" ]]; then
         echo "Error: Cannot parse memory usage"
         exit 1
-    }
+    fi
     
     awk -v used="$used_mem" -v total="$total_mem" 'BEGIN { printf "%.2f", (used * 100) / total }'
 }
