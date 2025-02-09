@@ -14,9 +14,8 @@ log_message() {
 
 # Function to check if enough disk space is available
 check_disk_space() {
-    read -r -a dir_size_in_bytes_a <<<"$(du -sb "/home")"
-    dir_size_in_bytes="${dir_size_in_bytes_a[0]}"
-    available_space_in_bytes=$(df --output=avail / | tail -1)
+    available_space_in_bytes=$(df --output=avail /home | tail -1)
+    dir_size_in_bytes=$(du -sb /home | cut -f1)
     
     if (( available_space_in_bytes > dir_size_in_bytes )); then
         return 0
