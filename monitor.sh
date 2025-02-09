@@ -1,17 +1,3 @@
-H 
-
-
-
-
-דילוג לתוכן
-שימוש ב-Gmail עם קוראי מסך
-להפעיל התראות של Gmail בשולחן העבודה?
-   אישור  לא תודה
-שיחות
-1.23GB מתוך 15GB נמצאים בשימוש
-תנאים · פרטיות · מדיניות התוכנית
-פעילות אחרונה בחשבון: לפני 0 דקות
-כרגע בשימוש במקום אחד נוסף · פרטים
 #!/bin/bash
 
 # Check if running as root in interactive mode
@@ -102,5 +88,3 @@ else
     # Log format: [timestamp] cpu% mem% tx rx
     echo "[$(date +'%a %b %d %H:%M:%S %Z %Y')] $cpu_usage $mem_usage $tx_bytes $rx_bytes" >> "$LOG_FILE"
 fi
-monitor.sh
-מציג את monitor.sh.
