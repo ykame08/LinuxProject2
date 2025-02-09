@@ -1,3 +1,17 @@
+H 
+
+
+
+
+דילוג לתוכן
+שימוש ב-Gmail עם קוראי מסך
+להפעיל התראות של Gmail בשולחן העבודה?
+   אישור  לא תודה
+שיחות
+1.23GB מתוך 15GB נמצאים בשימוש
+תנאים · פרטיות · מדיניות התוכנית
+פעילות אחרונה בחשבון: לפני 0 דקות
+כרגע בשימוש במקום אחד נוסף · פרטים
 #!/bin/bash
 
 # Check if running as root in interactive mode
@@ -23,7 +37,8 @@ get_memory_usage() {
     read -r -a mem_info <<<"$(free | grep Mem)"
     total_mem="${mem_info[1]}"
     used_mem="${mem_info[2]}"
-    echo "scale=2; ($used_mem * 100) / $total_mem" | bc
+    # Fix: Add -l flag to bc and quote the expression
+    echo "scale=2; ($used_mem * 100) / $total_mem" | bc -l
 }
 
 # Function to get network statistics for physical interface
@@ -54,6 +69,7 @@ get_trend() {
     read -r -a last_log_entry <<<"$(tail -1 "$LOG_FILE" | cut -d ']' -f 2)"
     local last_value="${last_log_entry[$metric_index]}"
     
+    # Fix: Add -l flag to bc for floating point comparison
     if (( $(echo "$current_value > $last_value" | bc -l) )); then
         echo "rise"
     else
@@ -86,3 +102,5 @@ else
     # Log format: [timestamp] cpu% mem% tx rx
     echo "[$(date +'%a %b %d %H:%M:%S %Z %Y')] $cpu_usage $mem_usage $tx_bytes $rx_bytes" >> "$LOG_FILE"
 fi
+monitor.sh
+מציג את monitor.sh.
