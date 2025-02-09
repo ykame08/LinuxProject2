@@ -84,6 +84,10 @@ cpu_usage=$(get_cpu_usage)
 mem_usage=$(get_memory_usage)
 read -r tx_bytes rx_bytes <<<"$(get_network_stats)"
 
+# Debugging output
+echo "Logging to: $LOG_FILE"
+echo "CPU: $cpu_usage%, Memory: $mem_usage%, Tx: $tx_bytes, Rx: $rx_bytes"
+
 # Handle interactive mode
 if [[ -t 0 ]]; then
     cpu_trend=$(get_trend "$cpu_usage" 0)
@@ -100,4 +104,5 @@ if [[ -t 0 ]]; then
 else
     manage_log_file
     echo "[$(date +'%a %b %d %H:%M:%S %Z %Y')] $cpu_usage $mem_usage $tx_bytes $rx_bytes" >> "$LOG_FILE"
+    echo "Log entry added."  # Debugging message
 fi
