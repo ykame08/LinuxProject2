@@ -12,7 +12,7 @@ fi
 LOG_FILE="/var/log/monitor.log"
 MAX_LOG_SIZE=$((10 * 1024 * 1024))  # 10MB in bytes
 
-# Function to manage log size
+# Function to manage log file
 manage_log_file() {
     # Create log file if it doesn't exist
     if [[ ! -f "$LOG_FILE" ]]; then
@@ -78,6 +78,20 @@ get_trend() {
     fi
 }
 
+# Function to write log entry
+write_log_entry() {
+    local cpu_usage=$1
+    local mem_usage=$2
+    local tx_bytes=$3
+    local rx_bytes=$4
+    
+    # Format timestamp according to example
+    local timestamp=$(date +'[%a %b %d %H:%M:%S %Z %Y]')
+    
+    # Write log entry in format: [timestamp] cpu% mem% tx rx
+    echo "$timestamp $cpu_usage $mem_usage $tx_bytes $rx_bytes" >> "$LOG_FILE"
+}
+
 # Get current metrics
 cpu_usage=$(get_cpu_usage)
 mem_usage=$(get_memory_usage)
@@ -103,6 +117,6 @@ else
     # Manage log file before adding new entry
     manage_log_file
     
-    # Log format: LOG_FILE="/var/log/monitor.log" echo "[timestamp] cpu% mem% tx rx"
-    echo "[$(date +'%a %b %d %H:%M:%S %Z %Y')] $cpu_usage $mem_usage $tx_bytes $rx_bytes" >> "$LOG_FILE"
+    # Write metrics to log
+    write_log_entry "$cpu_usage" "$mem_usage" "$tx_bytes" "$rx_bytes"
 fi
